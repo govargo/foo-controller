@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: foo-controller
+  labels:
+    app: foo-controller
+spec:
+  selector:
+    matchLabels:
+      app: foo-controller
+  template:
+    metadata:
+      labels:
+        app: foo-controller
+    spec:
+      serviceAccountName: foo-controller
+      containers:
+      - name: foo-controller
+        image: govargo/foo-controller:debian
+        imagePullPolicy: Always
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/run/secrets/google/key.json
+        volumeMounts:
+        - name: gcp-credential
+          mountPath: /var/run/secrets/google
+      volumes:
+      - name: gcp-credential
+        secret:
+          secretName: gcp-credential
